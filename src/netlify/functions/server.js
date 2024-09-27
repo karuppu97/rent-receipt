@@ -116,7 +116,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   let currentYPosition = addressYPosition - 5;
 
   // Loop through the address lines and add them to the document
-  const addressLeftOffset = 10; // Adjust this value for the right margin
+  const addressLeftOffset = 55; // Adjust this value for the right margin
 
   // Loop through the address lines and add them to the document
   addressLines.forEach((line, index) => {
@@ -125,11 +125,11 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
         .fillColor("#969696")
         .text(
           index == 6 ? `Phone: ${line}` : line,
-          margin + width - 220 - addressLeftOffset,
+          margin + width - 220 + addressLeftOffset,
           currentYPosition,
           {
             width: 220,
-            align: "right",
+            align: "left",
             lineBreak: true,
           }
         );

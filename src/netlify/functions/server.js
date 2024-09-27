@@ -13,6 +13,24 @@ async function fetchImageBuffer(imageUrl) {
   return response.data;
 }
 
+// Helper function to fetch and parse properties file
+const fetchPropertiesFile = async (requestOrigin) => {
+  const propertiesFilePath = `${requestOrigin}/config.properties`;
+  console.log("Properties file path:", propertiesFilePath);
+
+  try {
+    const response = await fetch(propertiesFilePath);
+    if (!response.ok) {
+      throw new Error("Failed to load properties file");
+    }
+    const data = await response.text();
+    return data.split("\n"); // Split the file by new lines
+  } catch (error) {
+    console.error("Error fetching properties file:", error);
+    return [];
+  }
+};
+
 // Function to generate PDF and return it as a stream
 async function createPDFStream(text, requestOrigin) {
   const { tenantName, roomNo, amount, date, email, phno, receiptNo } = text;
@@ -83,7 +101,7 @@ async function createPDFStream(text, requestOrigin) {
   //   // Positioned below the title
   //   width: 200,
   // });
-  const landlordInfo = readLandlordAddress(); // Call the function to get the info
+  const landlordInfo = readLandlordAddress(requestOrigin); // Call the function to get the info
 
   console.log(`first address: ${landlordInfo.landlordAddress1}`);
   // Landlord Address
@@ -313,41 +331,30 @@ exports.handler = async (event) => {
 };
 
 // Function to read the current receipt counter
-const readCounter = () => {
-  console.log("Properties file path:", propertiesFilePath);
-  const data = fs.readFileSync(propertiesFilePath, "utf-8");
-  const lines = data.split("\n");
+const readCounter = async () => {
+  const lines = await fetchPropertiesFile();
   const counterLine = lines.find((line) => line.startsWith("receiptCounter"));
-  return parseInt(counterLine.split("=")[1], 10);
+  if (counterLine) {
+    return parseInt(counterLine.split("=")[1], 10);
+  }
+  throw new Error("receiptCounter not found in properties file");
 };
 
 // Function to read the current landlord address
-const readLandlordAddress = () => {
-  console.log("Properties file path2:", propertiesFilePath);
-  const data = fs.readFileSync(propertiesFilePath, "utf-8");
-  const lines = data.split("\n");
-  console.log(`lines: ${lines}`);
-
+const readLandlordAddress = async () => {
+  const lines = await fetchPropertiesFile();
+  
   // Initialize an object to hold all the extracted information
   const landlordInfo = {};
 
   // Extract each piece of information
   lines.forEach((line) => {
     if (line.startsWith("landlordAddress1")) {
-      landlordInfo.landlordAddress1 = line
-        .split("=")[1]
-        .replace(/"/g, "")
-        .trim();
+      landlordInfo.landlordAddress1 = line.split("=")[1].replace(/"/g, "").trim();
     } else if (line.startsWith("landlordAddress2")) {
-      landlordInfo.landlordAddress2 = line
-        .split("=")[1]
-        .replace(/"/g, "")
-        .trim();
+      landlordInfo.landlordAddress2 = line.split("=")[1].replace(/"/g, "").trim();
     } else if (line.startsWith("landlordAddress3")) {
-      landlordInfo.landlordAddress3 = line
-        .split("=")[1]
-        .replace(/"/g, "")
-        .trim();
+      landlordInfo.landlordAddress3 = line.split("=")[1].replace(/"/g, "").trim();
     } else if (line.startsWith("city")) {
       landlordInfo.city = line.split("=")[1].replace(/"/g, "").trim();
     } else if (line.startsWith("state")) {
@@ -367,13 +374,69 @@ const readLandlordAddress = () => {
   return landlordInfo;
 };
 
+
+// Function to read the current receipt counter
+// const readCounter = async () => {
+//   console.log("Properties file path:", propertiesFilePath);
+//   const data = fs.readFileSync(propertiesFilePath, "utf-8");
+//   const lines = data.split("\n");
+//   const counterLine = lines.find((line) => line.startsWith("receiptCounter"));
+//   return parseInt(counterLine.split("=")[1], 10);
+// };
+
+// Function to read the current landlord address
+// const readLandlordAddress = () => {
+//   console.log("Properties file path2:", propertiesFilePath);
+//   const data = fs.readFileSync(propertiesFilePath, "utf-8");
+//   const lines = data.split("\n");
+//   console.log(`lines: ${lines}`);
+
+//   // Initialize an object to hold all the extracted information
+//   const landlordInfo = {};
+
+//   // Extract each piece of information
+//   lines.forEach((line) => {
+//     if (line.startsWith("landlordAddress1")) {
+//       landlordInfo.landlordAddress1 = line
+//         .split("=")[1]
+//         .replace(/"/g, "")
+//         .trim();
+//     } else if (line.startsWith("landlordAddress2")) {
+//       landlordInfo.landlordAddress2 = line
+//         .split("=")[1]
+//         .replace(/"/g, "")
+//         .trim();
+//     } else if (line.startsWith("landlordAddress3")) {
+//       landlordInfo.landlordAddress3 = line
+//         .split("=")[1]
+//         .replace(/"/g, "")
+//         .trim();
+//     } else if (line.startsWith("city")) {
+//       landlordInfo.city = line.split("=")[1].replace(/"/g, "").trim();
+//     } else if (line.startsWith("state")) {
+//       landlordInfo.state = line.split("=")[1].replace(/"/g, "").trim();
+//     } else if (line.startsWith("country")) {
+//       landlordInfo.country = line.split("=")[1].replace(/"/g, "").trim();
+//     } else if (line.startsWith("mobileno")) {
+//       landlordInfo.mobileno = line.split("=")[1].replace(/"/g, "").trim();
+//     } else if (line.startsWith("mailId")) {
+//       landlordInfo.mailId = line.split("=")[1].replace(/"/g, "").trim();
+//     }
+//   });
+
+//   console.log("Extracted Landlord Info:", landlordInfo);
+
+//   // Return the extracted information as an object
+//   return landlordInfo;
+// };
+
 // Function to update the receipt counter
-const updateCounter = (newCounter) => {
-  console.log("Properties file path3:", propertiesFilePath);
-  let data = fs.readFileSync(propertiesFilePath, "utf-8");
-  data = data.replace(/receiptCounter=\d+/, `receiptCounter=${newCounter}`);
-  fs.writeFileSync(propertiesFilePath, data);
-};
+// const updateCounter = (newCounter) => {
+//   console.log("Properties file path3:", propertiesFilePath);
+//   let data = fs.readFileSync(propertiesFilePath, "utf-8");
+//   data = data.replace(/receiptCounter=\d+/, `receiptCounter=${newCounter}`);
+//   fs.writeFileSync(propertiesFilePath, data);
+// };
 
 // Endpoint to get the next receipt number
 // app.get("/api/landlord-address", (req, res) => {

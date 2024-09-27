@@ -312,7 +312,7 @@ exports.handler = async (event) => {
       } else if (body.action === "sendEmail") {
         const { to, subject, text, values } = body;        
         const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`; 
-        const pdfStream = createPDFStream(values, requestOrigin);
+        const pdfStream = await createPDFStream(values, requestOrigin);
         
       console.log(`pdfStream  ${pdfStream}`);
         const mailOptions = {

@@ -32,7 +32,7 @@ const fetchPropertiesFile = async (requestOrigin) => {
 };
 
 // Function to generate PDF and return it as a stream
-async function createPDFStream(text, requestOrigin) {
+async function createPDFStream(text, landlordInfo, requestOrigin) {
   const { tenantName, roomNo, amount, date, email, phno, receiptNo } = text;
 
   // Create a new PDF document
@@ -101,9 +101,7 @@ async function createPDFStream(text, requestOrigin) {
   //   // Positioned below the title
   //   width: 200,
   // });
-  const landlordInfo = await readLandlordAddress(requestOrigin); // Call the function to get the info
 
-  console.log(`first address: ${landlordInfo.landlordAddress1}`);
   // Landlord Address
   // Print each part of the landlord address on a new line
   const addressLines = [
@@ -285,14 +283,14 @@ const transporter = nodemailer.createTransport({
 // Handler for Netlify serverless function
 exports.handler = async (event) => {
   try {
-    if (event.httpMethod === "GET") {
-      console.log(`INSIDE GET METHOD`);
-      const counter = readCounter();
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
-      };
-    }
+    // if (event.httpMethod === "GET") {
+    //   console.log(`INSIDE GET METHOD`);
+    //   const counter = readCounter();
+    //   return {
+    //     statusCode: 200,
+    //     body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
+    //   };
+    // }
 
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body);
@@ -312,11 +310,12 @@ exports.handler = async (event) => {
       } else if (body.action === "sendEmail") {
         const { to, subject, text, values } = body;        
         const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`; 
-        const pdfStream = await createPDFStream(values, requestOrigin);
+        const landlordInfo = await readLandlordAddress(requestOrigin);
+        const pdfStream = await createPDFStream(values, landlordInfo, requestOrigin);
         
       console.log(`pdfStream  ${pdfStream}`);
         const mailOptions = {
-          from: "your_email@gmail.com",
+          from: landlordInfo ? landlordInfo.mailId : "skydreampgs@gmail.com",
           to,
           subject,
           text,

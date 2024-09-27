@@ -9,6 +9,7 @@ const ReceiptForm = ({ onGenerate }) => {
     <div className="form-container">
       <Formik
         initialValues={{
+          receiptNo: "",
           tenantName: "",
           roomNo: "",
           amount: "",
@@ -17,6 +18,7 @@ const ReceiptForm = ({ onGenerate }) => {
           email: "",
         }}
         validationSchema={Yup.object({
+          receiptNo: Yup.string().required("Required"),
           tenantName: Yup.string().required("Required"),
           roomNo: Yup.string().required("Required"),
           amount: Yup.number()
@@ -36,6 +38,12 @@ const ReceiptForm = ({ onGenerate }) => {
         }}
       >
         <Form>
+          <div className="form-group">
+            <label htmlFor="receiptNo">Receipt No</label>
+            <Field type="text" id="receiptNo" name="receiptNo" />
+            <ErrorMessage name="receiptNo" component="div" className="error" />
+          </div>
+        
           <div className="form-group">
             <label htmlFor="tenantName">Tenant Name</label>
             <Field type="text" id="tenantName" name="tenantName" />

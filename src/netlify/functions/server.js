@@ -219,8 +219,27 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
     align: "left",
   });
 
+  // Define a new Y position for the additional image below the Date field
+const additionalImageYPosition = fieldStartY + 150; // Adjusting the position below the "Date" field
+
+// Path for the new image
+const additionalImagePath = `${requestOrigin}/PG_Stamp_Img.jpg`;
+
+console.log(`IMG PATH ADDITIONAL ----> ${additionalImagePath}`);
+try {
+  const additionalImageBuffer = await fetchImageBuffer(additionalImagePath);
+  // Add the new image below the "Date" field
+  doc.image(additionalImageBuffer, margin + 10, additionalImageYPosition, {
+    width: 200,  // Adjust the width as necessary
+    height: 100, // Adjust the height as necessary
+  });
+} catch (error) {
+  console.error("Error fetching additional image:", error);
+  // Optionally handle the error (e.g., use a placeholder image)
+}
+  
   // Add "Authorized By" heading
-  const authorizedByYPosition = fieldStartY + 290 - 150; // Position for "Authorized By" heading
+  const authorizedByYPosition = additionalImageYPosition + 115; // Position for "Authorized By" heading
   const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
   doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
     align: "left",

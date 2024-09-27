@@ -101,7 +101,7 @@ async function createPDFStream(text, requestOrigin) {
   //   // Positioned below the title
   //   width: 200,
   // });
-  const landlordInfo = readLandlordAddress(requestOrigin); // Call the function to get the info
+  const landlordInfo = await readLandlordAddress(requestOrigin); // Call the function to get the info
 
   console.log(`first address: ${landlordInfo.landlordAddress1}`);
   // Landlord Address

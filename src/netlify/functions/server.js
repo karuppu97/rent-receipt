@@ -59,6 +59,8 @@ function createPDFStream(text) {
   const logoYPosition = contentYPosition - 10; // Move logo higher
   const addressYPosition = logoYPosition + 15; // Position address directly below the logo
 
+  
+  console.log(`Inside Create PDF ----> `);
   // Add the logo on the left side
   const logoPath = path.join(__dirname, "../PG_LOGO.jpg");
   doc.image(logoPath, margin + 10, logoYPosition, {

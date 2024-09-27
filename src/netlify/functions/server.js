@@ -229,7 +229,7 @@ console.log(`IMG PATH ADDITIONAL ----> ${additionalImagePath}`);
 try {
   const additionalImageBuffer = await fetchImageBuffer(additionalImagePath);
   // Add the new image below the "Date" field
-  doc.image(additionalImageBuffer, margin + 10, additionalImageYPosition, {
+  doc.image(additionalImageBuffer, margin + width - 270, additionalImageYPosition, {
     width: 200,  // Adjust the width as necessary
     height: 100, // Adjust the height as necessary
   });
@@ -239,7 +239,7 @@ try {
 }
   
   // Add "Authorized By" heading
-  const authorizedByYPosition = additionalImageYPosition + 115; // Position for "Authorized By" heading
+  const authorizedByYPosition = additionalImageYPosition + 130; // Position for "Authorized By" heading
   const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
   doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
     align: "left",
@@ -256,8 +256,8 @@ try {
   console.log(`IMG PATH AUTH ----> ${imagePath}`);
   try {
     const logoBuffer = await fetchImageBuffer(imagePath);
-    const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
-    doc.image(logoBuffer, authorizedByXPosition, imageYPosition, {
+    const imageYPosition = authorizedByYPosition + 20; // Position the image below the heading
+    doc.image(logoBuffer, authorizedByXPosition - 15, imageYPosition, {
     width: 200, // Adjust the width as necessary
     height: 40, // Adjust the height as necessary
   });

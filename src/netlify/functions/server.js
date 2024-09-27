@@ -274,8 +274,8 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
 const transporter = nodemailer.createTransport({
   service: "gmail", // or another email service
   auth: {
-    user: "karuppusamythangavel97@gmail.com",
-    pass: "rfds oxjr arnh lxog",
+    user: "skydreampgs@gmail.com",
+    pass: "sezl vozi qzbo vbf",
   },
 });
 

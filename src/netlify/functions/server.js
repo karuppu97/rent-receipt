@@ -62,7 +62,9 @@ function createPDFStream(text) {
   
   console.log(`Inside Create PDF ----> `);
   // Add the logo on the left side
-  const logoPath = path.join(__dirname, "../PG_LOGO.jpg");
+  console.log(`LOGO PATH FIRST ----> ${__dirname}`);
+  const logoPath = path.join(__dirname, "../PG_LOGO.jpg");  
+  console.log(`LOGO PATH SECOND ----> ${logoPath}`);
   doc.image(logoPath, margin + 10, logoYPosition, {
     // Positioned below the title
     width: 200,

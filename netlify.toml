@@ -1,2 +1,7 @@
 [build]
   functions = "src/netlify/functions"
+  
+[[redirects]]
+  from = "/config.properties"
+  to = "/src/config.properties"
+  status = 200

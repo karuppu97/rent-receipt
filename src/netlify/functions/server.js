@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
 
-const propertiesFilePath = "../../config.properties";
+const propertiesFilePath = path.resolve(__dirname, '../../config.properties');
 
 async function fetchImageBuffer(imageUrl) {
   const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
@@ -314,6 +314,7 @@ exports.handler = async (event) => {
 
 // Function to read the current receipt counter
 const readCounter = () => {
+  console.log("Properties file path:", propertiesFilePath);
   const data = fs.readFileSync(propertiesFilePath, "utf-8");
   const lines = data.split("\n");
   const counterLine = lines.find((line) => line.startsWith("receiptCounter"));
@@ -322,6 +323,7 @@ const readCounter = () => {
 
 // Function to read the current landlord address
 const readLandlordAddress = () => {
+  console.log("Properties file path2:", propertiesFilePath);
   const data = fs.readFileSync(propertiesFilePath, "utf-8");
   const lines = data.split("\n");
   console.log(`lines: ${lines}`);
@@ -367,6 +369,7 @@ const readLandlordAddress = () => {
 
 // Function to update the receipt counter
 const updateCounter = (newCounter) => {
+  console.log("Properties file path3:", propertiesFilePath);
   let data = fs.readFileSync(propertiesFilePath, "utf-8");
   data = data.replace(/receiptCounter=\d+/, `receiptCounter=${newCounter}`);
   fs.writeFileSync(propertiesFilePath, data);

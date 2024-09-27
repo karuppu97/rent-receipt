@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 const fs = require("fs");
 
-const propertiesFilePath = "./config.properties";
+const propertiesFilePath = "../../config.properties";
 
 // Function to generate PDF and return it as a stream
 function createPDFStream(text) {

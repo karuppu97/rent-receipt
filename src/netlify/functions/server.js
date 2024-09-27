@@ -315,7 +315,7 @@ exports.handler = async (event) => {
         const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
         const day = String(today.getDate()).padStart(2, '0');    
         const currentDate = `${year}_${month}_${day}`
-        const rentReceiptName = values ? `Receipt_${values.receiptNo}_currentDate` : `rentReceipt`
+        const rentReceiptName = values ? `Receipt_${values.receiptNo}_${currentDate}` : `rentReceipt`
         console.log(`pdfStream  ${pdfStream}`);
         const mailOptions = {
           from: landlordInfo ? landlordInfo.mailId : "skydreampgs@gmail.com",

@@ -1,0 +1,11 @@
+[build]
+  publish = "dist" # Change this to your output directory if needed
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild" # Optional, use esbuild for faster builds
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

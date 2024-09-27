@@ -1,16 +1,9 @@
 // backend.js (Node.js server-side script)
 const PDFDocument = require("pdfkit");
-const { Readable, PassThrough } = require("stream");
-const express = require("express");
+const { PassThrough } = require("stream");
 const nodemailer = require("nodemailer");
-const cors = require("cors");
-const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
-
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
 const propertiesFilePath = "./config.properties";
 
@@ -125,8 +118,27 @@ function createPDFStream(text) {
       width,
     }); // Center the title
 
-  // Add Name, Amount, and Date fields with dashed underlines
-  const fieldStartY = titleYPosition + 50; // Starting position for fields
+  // Add Receipt Number and Date
+  const receiptNumber = receiptNo; // Example receipt number
+  const receiptDate = currentDate; // Use the current date generated earlier
+
+  // Define positions for receipt number and date
+  const receiptNumberYPosition = titleYPosition + 30; // Position below the title
+  const receiptNumberXPosition = margin + 10; // Left side
+  const receiptDateXPosition = margin + width - 220; // Right side
+
+  // Add Receipt Number on the left
+  doc.fontSize(16).text(receiptNumber, receiptNumberXPosition, receiptNumberYPosition, {
+    align: "left",
+  });
+
+  // Add Date on the right
+  doc.fontSize(16).text(`Date: ${receiptDate}`, receiptDateXPosition, receiptNumberYPosition, {
+    align: "right",
+  });
+
+  // Continue with the rest of the fields
+  const fieldStartY = receiptNumberYPosition + 30; // Adjusting the starting position for fields
   const fieldWidth = width - 20; // Width for fields
   const labelWidth = 80; // Width for the label
 
@@ -177,12 +189,15 @@ function createPDFStream(text) {
 
   // Add "Authorized By" heading
   const authorizedByYPosition = fieldStartY + 290; // Position for "Authorized By" heading
-  doc.text("Authorized By:", margin + 10, authorizedByYPosition);
+  const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
+  doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
+    align: "left",
+  });
 
   // Add the image below the "Authorized By" heading
   const imagePath = path.join(__dirname, "Authorized_Signature.jpg"); // Replace with your image file path
   const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
-  doc.image(imagePath, margin + 10, imageYPosition, {
+  doc.image(imagePath, authorizedByXPosition, imageYPosition, {
     width: 200, // Adjust the width as necessary
     height: 40, // Adjust the height as necessary
   });
@@ -207,7 +222,6 @@ function createPDFStream(text) {
 
   // End the document
   doc.end();
-
   return passThrough;
 }
 
@@ -218,6 +232,66 @@ const transporter = nodemailer.createTransport({
     pass: "rfds oxjr arnh lxog",
   },
 });
+
+// Handler for Netlify serverless function
+exports.handler = async (event) => {
+  try {
+    if (event.httpMethod === "GET") {
+      const counter = readCounter();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
+      };
+    }
+
+    if (event.httpMethod === "POST") {
+      const body = JSON.parse(event.body);
+
+      if (body.action === "increment") {
+        let counter = readCounter();
+        counter++;
+        updateCounter(counter);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
+        };
+      } else if (body.action === "sendEmail") {
+        const { to, subject, text, values } = body;
+        const pdfStream = createPDFStream(values);
+
+        const mailOptions = {
+          from: "your_email@gmail.com",
+          to,
+          subject,
+          text,
+          attachments: [
+            {
+              filename: "rentreceipt.pdf",
+              content: pdfStream,
+              contentType: "application/pdf",
+            },
+          ],
+        };
+
+        await transporter.sendMail(mailOptions);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: "Email sent successfully!" }),
+        };
+      }
+    }
+
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: "Method not allowed" }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.toString() }),
+    };
+  }
+};
 
 // Function to read the current receipt counter
 const readCounter = () => {
@@ -286,45 +360,45 @@ const updateCounter = (newCounter) => {
 //   res.json({ landlordAddress: JSON.stringify(landlordAddress) });
 // });
 
-// Endpoint to get the next receipt number
-app.get("/api/receipt-number", (req, res) => {
-  const counter = readCounter();
-  res.json({ receiptNumber: `Receipt #${counter}` });
-});
+// // Endpoint to get the next receipt number
+// app.get("/api/receipt-number", (req, res) => {
+//   const counter = readCounter();
+//   res.json({ receiptNumber: `Receipt #${counter}` });
+// });
 
-// Endpoint to increment the counter
-app.post("/api/receipt-number", (req, res) => {
-  let counter = readCounter();
-  counter++;
-  updateCounter(counter);
-  res.json({ receiptNumber: `Receipt #${counter}` });
-});
+// // Endpoint to increment the counter
+// app.post("/api/receipt-number", (req, res) => {
+//   let counter = readCounter();
+//   counter++;
+//   updateCounter(counter);
+//   res.json({ receiptNumber: `Receipt #${counter}` });
+// });
 
-app.post("/send-email", (req, res) => {
-  const { to, subject, text, values } = req.body;
+// app.post("/send-email", (req, res) => {
+//   const { to, subject, text, values } = req.body;
 
-  const pdfStream = createPDFStream(values);
-  const mailOptions = {
-    from: "karuppusamythangavel97@gmail.com",
-    to,
-    subject,
-    text,
-    attachments: [
-      {
-        filename: "rentreceipt.pdf",
-        content: pdfStream,
-        encoding: "application/pdf", // Optional: encoding can be used for specific cases
-      },
-    ],
-  };
+//   const pdfStream = createPDFStream(values);
+//   const mailOptions = {
+//     from: "karuppusamythangavel97@gmail.com",
+//     to,
+//     subject,
+//     text,
+//     attachments: [
+//       {
+//         filename: "rentreceipt.pdf",
+//         content: pdfStream,
+//         encoding: "application/pdf", // Optional: encoding can be used for specific cases
+//       },
+//     ],
+//   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).send(error.toString());
-    }
-    res.status(200).send("Email sent: " + info.response);
-  });
-});
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       return res.status(500).send(error.toString());
+//     }
+//     res.status(200).send("Email sent: " + info.response);
+//   });
+// });
 
 const port = 5000;
 app.listen(port, () => {

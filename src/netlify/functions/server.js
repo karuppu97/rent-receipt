@@ -296,11 +296,12 @@ exports.handler = async (event) => {
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body);
 
-      if (body.action === "increment") {
-        let counter = readCounter();
+      if (body.action === "increment") { 
+        const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`;
+        let counter = readCounter(requestOrigin);
         counter++;
         // updateCounter(counter);
-        updateReceiptCounter(counter);
+        updateReceiptCounter(counter, requestOrigin);
         return {
           statusCode: 200,
           body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
@@ -345,8 +346,8 @@ exports.handler = async (event) => {
 };
 
 // Function to read the current receipt counter
-const readCounter = async () => {
-  const lines = await fetchPropertiesFile();
+const readCounter = async (requestOrigin) => {
+  const lines = await fetchPropertiesFile(requestOrigin);
   const counterLine = lines.find((line) => line.startsWith("receiptCounter"));
   if (counterLine) {
     return parseInt(counterLine.split("=")[1], 10);
@@ -355,8 +356,8 @@ const readCounter = async () => {
 };
 
 // Function to read the current landlord address
-const readLandlordAddress = async () => {
-  const lines = await fetchPropertiesFile();
+const readLandlordAddress = async (requestOrigin) => {
+  const lines = await fetchPropertiesFile(requestOrigin);
   
   // Initialize an object to hold all the extracted information
   const landlordInfo = {};

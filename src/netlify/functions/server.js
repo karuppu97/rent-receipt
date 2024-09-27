@@ -138,7 +138,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Add the title "Rental Receipt" in the center on the next line
-  const titleYPosition = currentYPosition + 30 + 45; // Position below the address
+  const titleYPosition = currentYPosition + 30 + 15; // Position below the address
 
   // Add the title "Rental Receipt" in the center
   doc
@@ -220,7 +220,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Add "Authorized By" heading
-  const authorizedByYPosition = fieldStartY + 290 - 60; // Position for "Authorized By" heading
+  const authorizedByYPosition = fieldStartY + 290 - 150; // Position for "Authorized By" heading
   const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
   doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
     align: "left",
@@ -259,8 +259,9 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   // Footer
   doc
     .fontSize(12)
+    .font("Helvetica-Bold") // Set the font to bold
     .fillColor("gray")
-    .text("Thank you for your payment!", margin + 10, height + margin - 50, {
+    .text("Thank you for the payment!", margin + 10, height + margin - 50, {
       align: "center",
       width: width - 20,
     });

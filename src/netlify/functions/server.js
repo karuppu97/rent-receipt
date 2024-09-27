@@ -140,7 +140,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Add the title "Rental Receipt" in the center on the next line
-  const titleYPosition = currentYPosition + 30; // Position below the address
+  const titleYPosition = currentYPosition + 30 + 45; // Position below the address
 
   // Add the title "Rental Receipt" in the center
   doc
@@ -157,12 +157,12 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   const receiptDate = currentDate; // Use the current date generated earlier
 
   // Define positions for receipt number and date
-  const receiptNumberYPosition = titleYPosition + 30; // Position below the title
+  const receiptNumberYPosition = titleYPosition + 30 + 30; // Position below the title
   const receiptNumberXPosition = margin + 10; // Left side
   const receiptDateXPosition = margin + width - 220; // Right side
 
   // Add Receipt Number on the left
-  doc.fontSize(16).text(receiptNumber, receiptNumberXPosition, receiptNumberYPosition, {
+  doc.fontSize(16).text(`Receipt No: ${receiptNumber}`, receiptNumberXPosition, receiptNumberYPosition, {
     align: "left",
   });
 
@@ -172,7 +172,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Continue with the rest of the fields
-  const fieldStartY = receiptNumberYPosition + 30; // Adjusting the starting position for fields
+  const fieldStartY = receiptNumberYPosition + 30 + 30; // Adjusting the starting position for fields
   const fieldWidth = width - 20; // Width for fields
   const labelWidth = 80; // Width for the label
 

@@ -4,11 +4,17 @@ const { PassThrough } = require("stream");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const fs = require("fs");
+const axios = require("axios");
 
 const propertiesFilePath = "../../config.properties";
 
+async function fetchImageBuffer(imageUrl) {
+  const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+  return response.data;
+}
+
 // Function to generate PDF and return it as a stream
-function createPDFStream(text, requestOrigin) {
+async function createPDFStream(text, requestOrigin) {
   const { tenantName, roomNo, amount, date, email, phno, receiptNo } = text;
 
   // Create a new PDF document
@@ -66,10 +72,17 @@ function createPDFStream(text, requestOrigin) {
   // const logoPath = path.join(__dirname, "../PG_LOGO.jpg");  
   const logoPath = `${requestOrigin}/PG_LOGO.jpg`;
   console.log(`LOGO PATH SECOND ----> ${logoPath}`);
-  doc.image(logoPath, margin + 10, logoYPosition, {
-    // Positioned below the title
-    width: 200,
-  });
+  try {
+    const logoBuffer = await fetchImageBuffer(logoPath);
+    doc.image(logoBuffer, margin + 10, logoYPosition, { width: 200 });
+  } catch (error) {
+    console.error("Error fetching logo image:", error);
+    // Optionally handle the error (e.g., use a placeholder image)
+  }
+  // doc.image(logoPath, margin + 10, logoYPosition, {
+  //   // Positioned below the title
+  //   width: 200,
+  // });
   const landlordInfo = readLandlordAddress(); // Call the function to get the info
 
   console.log(`first address: ${landlordInfo.landlordAddress1}`);

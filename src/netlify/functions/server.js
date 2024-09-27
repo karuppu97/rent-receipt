@@ -286,7 +286,8 @@ exports.handler = async (event) => {
       if (body.action === "increment") {
         let counter = readCounter();
         counter++;
-        updateCounter(counter);
+        // updateCounter(counter);
+        updateReceiptCounter(counter);
         return {
           statusCode: 200,
           body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),

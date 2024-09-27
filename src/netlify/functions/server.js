@@ -231,12 +231,25 @@ async function createPDFStream(text, requestOrigin) {
   });
 
   // Add the image below the "Authorized By" heading
-  const imagePath = path.join(__dirname, "../Authorized_Signature.jpg"); // Replace with your image file path
-  const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
-  doc.image(imagePath, authorizedByXPosition, imageYPosition, {
+  // const imagePath = path.join(__dirname, "../Authorized_Signature.jpg"); // Replace with your image file path
+  // const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
+  // doc.image(imagePath, authorizedByXPosition, imageYPosition, {
+  //   width: 200, // Adjust the width as necessary
+  //   height: 40, // Adjust the height as necessary
+  // });
+  const imagePath = `${requestOrigin}/Authorized_Signature.jpg`;
+  console.log(`IMG PATH AUTH ----> ${imagePath}`);
+  try {
+    const logoBuffer = await fetchImageBuffer(imagePath);
+    const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
+    doc.image(logoBuffer, authorizedByXPosition, imageYPosition, {
     width: 200, // Adjust the width as necessary
     height: 40, // Adjust the height as necessary
   });
+  } catch (error) {
+    console.error("Error fetching auth logo image:", error);
+    // Optionally handle the error (e.g., use a placeholder image)
+  }
 
   doc.fontSize(textStyle.fontSize).fillColor(textStyle.color).moveDown();
   // Last Red Rectangle (top-most)

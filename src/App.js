@@ -76,7 +76,7 @@ const App = () => {
   
     try {
       // Call the API to increment the receipt number and send email
-      const response = await fetch("/.netlify/functions/manageReceipt", {
+      const response = await fetch("/.netlify/functions/server", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

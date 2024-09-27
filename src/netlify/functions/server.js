@@ -66,8 +66,6 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   const rectangleHeight = 10; // Height of each rectangle
   const spaceAfterFirstRectangle = 30; // Space after the first rectangle
 
-  // Generate current date
-  const currentDate = new Date().toLocaleDateString("en-US");
 
   // First Red Rectangle (top-most)
   doc
@@ -154,7 +152,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
 
   // Add Receipt Number and Date
   const receiptNumber = receiptNo; // Example receipt number
-  const receiptDate = currentDate; // Use the current date generated earlier
+  const receiptDate = date; 
 
   // Define positions for receipt number and date
   const receiptNumberYPosition = titleYPosition + 30 + 30; // Position below the title
@@ -222,7 +220,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Add "Authorized By" heading
-  const authorizedByYPosition = fieldStartY + 290; // Position for "Authorized By" heading
+  const authorizedByYPosition = fieldStartY + 290 + 30; // Position for "Authorized By" heading
   const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
   doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
     align: "left",
@@ -312,8 +310,13 @@ exports.handler = async (event) => {
         const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`; 
         const landlordInfo = await readLandlordAddress(requestOrigin);
         const pdfStream = await createPDFStream(values, landlordInfo, requestOrigin);
-        
-      console.log(`pdfStream  ${pdfStream}`);
+        const today = new Date();    
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(today.getDate()).padStart(2, '0');    
+        const currentDate = `${year}_${month}_${day}`
+        const rentReceiptName = values ? `Receipt_${values.receiptNo}_currentDate` : `rentReceipt`
+        console.log(`pdfStream  ${pdfStream}`);
         const mailOptions = {
           from: landlordInfo ? landlordInfo.mailId : "skydreampgs@gmail.com",
           to,
@@ -321,7 +324,7 @@ exports.handler = async (event) => {
           text,
           attachments: [
             {
-              filename: "rentreceipt.pdf",
+              filename: rentReceiptName,
               content: pdfStream,
               contentType: "application/pdf",
             },

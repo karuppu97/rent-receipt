@@ -3,11 +3,12 @@ import React from "react";
 const Receipt = ({ data }) => {
   if (!data) return null;
 
-  const { tenantName, roomNo, amount, date, email, phno } = data;
+  const { receiptNo, tenantName, roomNo, amount, date, email, phno } = data;
 
   return (
     <div>
       <h2>Rent Receipt</h2>
+      <p>Receipt No: {receiptNo}</p>
       <p>Date: {date}</p>
       <p>Tenant: {tenantName}</p>
       <p>Room Number: {roomNo}</p>

@@ -60,7 +60,7 @@ function createPDFStream(text) {
   const addressYPosition = logoYPosition + 15; // Position address directly below the logo
 
   // Add the logo on the left side
-  const logoPath = path.join(__dirname, "PG_LOGO.jpg");
+  const logoPath = path.join(__dirname, "../assets/PG_LOGO.jpg");
   doc.image(logoPath, margin + 10, logoYPosition, {
     // Positioned below the title
     width: 200,
@@ -195,7 +195,7 @@ function createPDFStream(text) {
   });
 
   // Add the image below the "Authorized By" heading
-  const imagePath = path.join(__dirname, "Authorized_Signature.jpg"); // Replace with your image file path
+  const imagePath = path.join(__dirname, "../assets/Authorized_Signature.jpg"); // Replace with your image file path
   const imageYPosition = authorizedByYPosition + 15; // Position the image below the heading
   doc.image(imagePath, authorizedByXPosition, imageYPosition, {
     width: 200, // Adjust the width as necessary

@@ -220,7 +220,7 @@ async function createPDFStream(text, landlordInfo, requestOrigin) {
   });
 
   // Add "Authorized By" heading
-  const authorizedByYPosition = fieldStartY + 290 + 30; // Position for "Authorized By" heading
+  const authorizedByYPosition = fieldStartY + 290 + 60; // Position for "Authorized By" heading
   const authorizedByXPosition = margin + width - 220; // Right-aligned X position for heading
   doc.text("Authorized By:", authorizedByXPosition, authorizedByYPosition, {
     align: "left",

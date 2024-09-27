@@ -8,7 +8,7 @@ const fs = require("fs");
 const propertiesFilePath = "../../config.properties";
 
 // Function to generate PDF and return it as a stream
-function createPDFStream(text) {
+function createPDFStream(text, requestOrigin) {
   const { tenantName, roomNo, amount, date, email, phno, receiptNo } = text;
 
   // Create a new PDF document
@@ -64,7 +64,7 @@ function createPDFStream(text) {
   // Add the logo on the left side
   console.log(`LOGO PATH FIRST ----> ${__dirname}`);
   // const logoPath = path.join(__dirname, "../PG_LOGO.jpg");  
-  const logoPath = `${window.location.origin}/PG_LOGO.jpg`;
+  const logoPath = `${requestOrigin}/PG_LOGO.jpg`;
   console.log(`LOGO PATH SECOND ----> ${logoPath}`);
   doc.image(logoPath, margin + 10, logoYPosition, {
     // Positioned below the title
@@ -261,8 +261,9 @@ exports.handler = async (event) => {
           body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
         };
       } else if (body.action === "sendEmail") {
-        const { to, subject, text, values } = body;
-        const pdfStream = createPDFStream(values);
+        const { to, subject, text, values } = body;        
+        const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`; 
+        const pdfStream = createPDFStream(values, requestOrigin);
 
         const mailOptions = {
           from: "your_email@gmail.com",

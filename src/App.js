@@ -103,6 +103,24 @@ const App = () => {
       console.error("Error:", error);
     }
   };
+
+  const updateReceiptCounter = async (newCounter) => {
+  try {
+    const response = await fetch("/.netlify/functions/updateCounter", {
+      method: "POST",
+      body: JSON.stringify({ newCounter }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log("Counter updated successfully:", result.newCounter);
+    } else {
+      console.error("Failed to update counter:", result.error);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
   
   return (
     <div className="App">

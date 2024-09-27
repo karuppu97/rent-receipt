@@ -5,7 +5,7 @@ import Receipt from "./components/Receipt";
 
 const App = () => {
   const [receiptData, setReceiptData] = useState(null);
-  const [receiptNumber, setReceiptNumber] = useState("");
+  // const [receiptNumber, setReceiptNumber] = useState("");
   // const [landlordAddress, setLandlordAddress] = useState("");
 
   // const handleGenerate = (data) => {
@@ -83,7 +83,7 @@ const App = () => {
           action: "sendEmail",
           to: data.email,
           subject: "Rent Receipt",
-          text: `Hi ${data.tenantName}\n\nThanks for your payment!\n\nRegards,\nSKY DREAM PG OFFICE\nBangalore\nMob: +91 831-0781361`,
+          text: `Hi ${data.tenantName},\n\nThanks for your payment..!!😊\n\nRegards,\nSKY DREAM PG OFFICE\nBangalore\nMob: +91 831-0781361`,
           values: {
             ...data,
           },
@@ -93,8 +93,8 @@ const App = () => {
       const result = await response.json();
   
       if (response.ok) {
-        const generatedReceiptNumber = result.receiptNumber; // Adjust as needed based on your server response
-        setReceiptNumber(generatedReceiptNumber);
+        // const generatedReceiptNumber = result.receiptNumber; // Adjust as needed based on your server response
+        // setReceiptNumber(generatedReceiptNumber);
         console.log("Email sent successfully:", result.message);
       } else {
         console.error("Error sending email:", result.error);

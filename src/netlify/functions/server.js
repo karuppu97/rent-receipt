@@ -286,6 +286,7 @@ const transporter = nodemailer.createTransport({
 exports.handler = async (event) => {
   try {
     if (event.httpMethod === "GET") {
+      console.log(`INSIDE GET METHOD`);
       const counter = readCounter();
       return {
         statusCode: 200,
@@ -297,11 +298,13 @@ exports.handler = async (event) => {
       const body = JSON.parse(event.body);
 
       if (body.action === "increment") { 
+        
+      console.log(`INSIDE INCREMENT CALL`);
         const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`;
         let counter = readCounter(requestOrigin);
         counter++;
         // updateCounter(counter);
-        updateReceiptCounter(counter, requestOrigin);
+        // updateReceiptCounter(counter, requestOrigin);
         return {
           statusCode: 200,
           body: JSON.stringify({ receiptNumber: `Receipt #${counter}` }),
@@ -310,7 +313,8 @@ exports.handler = async (event) => {
         const { to, subject, text, values } = body;        
         const requestOrigin = event.headers.origin || `https://skydreampgrentreceipt.netlify.app/`; 
         const pdfStream = createPDFStream(values, requestOrigin);
-
+        
+      console.log(`pdfStream  ${pdfStream}`);
         const mailOptions = {
           from: "your_email@gmail.com",
           to,

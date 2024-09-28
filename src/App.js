@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import ReceiptForm from "./components/ReceiptForm";
 import Receipt from "./components/Receipt";
+import './App.css';
+import Logo from './assets/PG_LOGO.jpg'
 
 const App = () => {
   const [receiptData, setReceiptData] = useState(null);
@@ -123,9 +125,12 @@ const App = () => {
 };
   
   return (
-    <div className="App">
-      <ReceiptForm onGenerate={handleGenerateAndSendEmail} />
-      <Receipt data={receiptData} />
+    <div>
+      <img src={Logo} alt="PG Logo" className="bgImage"></img>
+      <div className="App">
+        <ReceiptForm onGenerate={handleGenerateAndSendEmail} />
+        <Receipt data={receiptData} />
+      </div>
     </div>
   );
 };

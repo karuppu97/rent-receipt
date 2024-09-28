@@ -229,8 +229,8 @@ console.log(`IMG PATH ADDITIONAL ----> ${additionalImagePath}`);
 try {
   const additionalImageBuffer = await fetchImageBuffer(additionalImagePath);
   // Add the new image below the "Date" field
-  doc.image(additionalImageBuffer, margin + width - 270, additionalImageYPosition, {
-    width: 200,  // Adjust the width as necessary
+  doc.image(additionalImageBuffer, margin + width - 220, additionalImageYPosition, {
+    width: 100,  // Adjust the width as necessary
     height: 100, // Adjust the height as necessary
   });
 } catch (error) {
